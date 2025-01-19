@@ -80,7 +80,6 @@ const Collection = () => {
   }, [category, subCategory, search, showSearch]);
 
   useEffect(() => {
-    console.log(sortType);
     sortProduct();
   }, [sortType]);
 
