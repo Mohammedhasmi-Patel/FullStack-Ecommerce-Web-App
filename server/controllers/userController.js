@@ -12,7 +12,50 @@ const createToken = (id) => {
 };
 
 // logic for login the user
-const loginUser = async (req, res) => {};
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide email and password",
+      });
+    }
+
+    // check user exist or not
+    const user = await User.findOne({
+      email,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User Doesnt Exist With this email...",
+      });
+    }
+
+    // match the password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "invalid credentials..",
+      });
+    }
+
+    // generate the token
+    const token = createToken(user._id);
+
+    return res.status(200).json({
+      success: true,
+      message: "user loggedin successfully..",
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 // logic for registering a new user
 const registerUser = async (req, res) => {
@@ -28,7 +71,7 @@ const registerUser = async (req, res) => {
     // check the user already exist or not
 
     const isUserExist = await User.findOne({
-      email,
+      email: email.toLowerCase(),
     });
 
     if (isUserExist) {
@@ -42,23 +85,29 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid email" });
     }
 
-    // password length is more than 8
-    if (password.length < 8) {
+    // suggest for strong password
+    if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minNumbers: 1,
+        minUppercase: 1,
+        minSymbols: 1,
+      })
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Password should be atleast 8 characters",
+        message:
+          "Password must be at least 8 characters long and include a number, an uppercase letter, and a special character.",
       });
     }
 
     // hashing the password
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // creating the user
     const user = await User.create({
       name,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
     });
 
