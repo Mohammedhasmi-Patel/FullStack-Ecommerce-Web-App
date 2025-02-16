@@ -126,6 +126,30 @@ const registerUser = async (req, res) => {
 };
 
 // logic for loggin the admin
-const adminLogin = async (req, res) => {};
+const adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const token = createToken(email + password, process.env.JWT_SECRET);
+
+      return res.status(200).json({
+        success: true,
+        message: "Admin Logged in successfully...",
+        token,
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "invalid credentials...",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 export { loginUser, registerUser, adminLogin };
