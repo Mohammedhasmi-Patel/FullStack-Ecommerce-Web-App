@@ -63,10 +63,52 @@ const addProduct = async (req, res) => {
 };
 
 // list prodcuts
-const listProduct = async () => {};
+const listProduct = async (req, res) => {
+  try {
+    const products = await Product.find({});
+    if (products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "products not found..",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "product data found successfully...",
+      products,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 // remove product
-const removeProduct = async () => {};
+const removeProduct = async (req, res) => {
+  try {
+    const productId = req.body.id;
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+    if (!deletedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "there is an error to delete the data",
+      });
+    }
+
+    return res.status(204).json({
+      success: true,
+      message: "product deleted successfully....",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 // info for single product
 const singleProduct = async () => {};
