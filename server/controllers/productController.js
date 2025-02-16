@@ -98,7 +98,7 @@ const removeProduct = async (req, res) => {
       });
     }
 
-    return res.status(204).json({
+    return res.status(200).json({
       success: true,
       message: "product deleted successfully....",
     });
@@ -111,6 +111,29 @@ const removeProduct = async (req, res) => {
 };
 
 // info for single product
-const singleProduct = async () => {};
+const singleProduct = async (req, res) => {
+  try {
+    const productId = req.body.id;
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "product not found..",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "product found successfully....",
+      product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 export { addProduct, listProduct, removeProduct, singleProduct };
