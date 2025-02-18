@@ -89,7 +89,9 @@ const listProduct = async (req, res) => {
 // remove product
 const removeProduct = async (req, res) => {
   try {
+    console.log(req);
     const productId = req.body.id;
+    console.log(productId);
     const deletedProduct = await Product.findByIdAndDelete(productId);
     if (!deletedProduct) {
       return res.status(404).json({

@@ -44,6 +44,13 @@ const AddProduct = ({ token }) => {
       // console.log(res);
       if (res?.data?.success) {
         toast.success("Product Added Successfully....");
+        setName("");
+        setDescription("");
+        setImage1(false);
+        setImage2(false);
+        setImage3(false);
+        setImage4(false);
+        setPrice("");
       } else {
         toast.error("there is something wrong at server...");
       }
