@@ -12,8 +12,10 @@ const adminAuth = async (req, res, next) => {
     }
 
     const verified_token = jwt.verify(token, process.env.JWT_SECRET);
+    // console.log(verified_token);
+    // console.log(process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD);
     if (
-      verified_token !==
+      verified_token.id !=
       process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD
     ) {
       return res.status(401).json({
